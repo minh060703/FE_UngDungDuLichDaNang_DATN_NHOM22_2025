@@ -19,7 +19,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>STT</th>
-                                                    <th>Tên người dùng</th>
+                                                    <th>Tên người </th>
                                                     <th>Ảnh đại diện</th>
                                                     <th>Ảnh Checkin</th>
                                                     <th>Nội dung</th>
