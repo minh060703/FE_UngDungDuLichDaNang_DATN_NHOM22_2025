@@ -2,7 +2,7 @@
  <div >
         <div>
             <div class="col-lg-12">
-                <div class="card text-light" style="background-color: rgba(79, 79, 79, 0.1);">                
+                <div class="card text-light bg-light" >                
                     <div class="card-body text-light p-3">
                         <div class="row m-3">
                                                      
@@ -28,7 +28,7 @@
                                                     <th>Trạng Thái</th>
                                                     <th>Phương Thức</th>
                                                     <th>Thao Tác</th>
-                                                </tr>
+                                                </tr>git branch -M main
                                             </thead>
                                             <tbody>
                                                 <template v-for="(value,index) in list_bv" :key="index">

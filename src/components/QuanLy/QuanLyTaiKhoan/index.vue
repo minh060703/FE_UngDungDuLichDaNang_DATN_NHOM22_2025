@@ -9,32 +9,36 @@
                         <input type="text" id="search">
                     </div>
                 </div>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>STT</th>
-                            <th>Tên đăng nhập</th>
-                            <th>Trạng thái</th>
-                            <th>Email</th>
-                            <th>Loại tài khoản</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody v-for="(value, index) in lists_tai_khoan" :key="index" @click="chon_tai_khoan(index)">
-                        <tr>
-                            <td>{{ index + 1 }}</td>
-                            <td>{{ value.ten_user }}</td>
-                            <td>{{ value.trang_thai }}</td>
-                            <td>{{ value.email }}</td>
-                            <td>{{ value.loai_tai_khoan }}</td>
-                            <td>{{ value.action }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="card-table card ">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên đăng nhập</th>
+                                <th>Trạng thái</th>
+                                <th>Email</th>
+                                <th>Loại tài khoản</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody v-for="(value, index) in lists_tai_khoan" :key="index" @click="chon_tai_khoan(index)">
+                            <tr>
+                                <td>{{ index + 1 }}</td>
+                                <td>{{ value.ten_user }}</td>
+                                <td>{{ value.trang_thai }}</td>
+                                <td>{{ value.email }}</td>
+                                <td>{{ value.loai_tai_khoan }}</td>
+                                <td>{{ value.action }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 <div class="pagination">
-                    <button class="btn-prev">Prev</button>
-                    page 1
-                    <button class="btn-next">Next</button>
+                    <button class="btn btn-prev text-dark"><i class="fa-solid fa-arrow-left"></i></button>
+                    <div class="fs-5">
+                        <b>1</b>
+                    </div>
+                    <button class="btn btn-next text-dark"><i class="fa-solid fa-arrow-right"></i></button>
                 </div>
             </div>
             <div class="col-lg-4">
@@ -44,23 +48,23 @@
                     </div>
                     <div class="info-item">
                         <label>Tên user</label>
-                        <div class="info-value"></div>
+                        <div class="info-value">{{ Luu_tam.ten_user }}</div>
                     </div>
                     <div class="info-item">
                         <label>Mật khẩu</label>
-                        <div class="info-value"></div>
+                        <div class="info-value">{{ Luu_tam.mat_khau }}</div>
                     </div>
                     <div class="info-item">
                         <label>Email</label>
-                        <div class="info-value"></div>
+                        <div class="info-value">{{ Luu_tam.email }}</div>
                     </div>
                     <div class="info-item">
                         <label>Trạng thái</label>
-                        <div class="info-value"></div>
+                        <div class="info-value">{{ Luu_tam.trang_thai }}</div>
                     </div>
                     <div class="info-item">
                         <label>Địa điểm</label>
-                        <div class="info-value"></div>
+                        <div class="info-value">{{ Luu_tam.dia_diem }}</div>
                     </div>
                 </div>
             </div>
@@ -73,6 +77,7 @@
 export default {
     data() {
         return {
+            Luu_tam: {}, // Lưu thông tin tài khoản đã chọn
             tai_khoan: {
                 ten_user: "",
                 mat_khau: "",
@@ -84,9 +89,41 @@ export default {
                 {
                     ten_user: "Nguyên Văn A",
                     trang_thai: "Đang hoạt động",
+                    mat_khau: "acb123",
                     email: "github@gmail.com",
                     loai_tai_khoan: "admin",
                     action: "Action",
+                    dia_diem:"123 ABC"
+
+                },
+                {
+                    ten_user: "Nguyên Văn B",
+                    trang_thai: "Đang hoạt động",
+                    mat_khau: "acb123",
+                    email: "github@gmail.com",
+                    loai_tai_khoan: "admin",
+                    action: "Action",
+                    dia_diem:"123 ABC"
+
+                },
+                {
+                    ten_user: "Nguyên Văn C",
+                    trang_thai: "Đang hoạt động",
+                    mat_khau: "acb123",
+                    email: "github@gmail.com",
+                    loai_tai_khoan: "admin",
+                    action: "Action",
+                    dia_diem:"123 ABC"
+
+                },
+                {
+                    ten_user: "Nguyên Văn D",
+                    trang_thai: "Đang hoạt động",
+                    mat_khau: "acb123",
+                    email: "github@gmail.com",
+                    loai_tai_khoan: "admin",
+                    action: "Action",
+                    dia_diem:"123 ABC"
 
                 },
             ],
@@ -94,10 +131,13 @@ export default {
         }
     },
     methods: {
+        // chon_tai_khoan(index) {
+        //     this.tai_khoan = { ...this.lists_tai_khoan[index] };  // Sao chép dữ liệu tài khoản vào tai_khoan
+        //     this.luu_tai_khoan = index;  // Lưu index của tai khoản để xóa hoặc sửa
+        // },
         chon_tai_khoan(index) {
-            this.tai_khoan = { ...this.lists_tai_khoan[index] };  // Sao chép dữ liệu tài khoản vào tai_khoan
-            this.luu_tai_khoan = index;  // Lưu index của tai khoản để xóa hoặc sửa
-        },
+            this.Luu_tam = this.lists_tai_khoan[index]; // Lưu thông tin tài khoản đã chọn vào selectedUser
+        }
     },
 
 }
@@ -230,5 +270,14 @@ table td {
     border-radius: 6px;
     color: #58D0C1;
     /* Màu chữ thông tin */
+}
+
+.card-table {
+    padding: 10px;
+    height: 410px;
+}
+
+.pagination .btn {
+    margin: 12px;
 }
 </style>

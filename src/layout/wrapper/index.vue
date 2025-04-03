@@ -7,8 +7,10 @@
       <MenuRocker></MenuRocker>
     </div>
     <div class="page-wrapper">
+      <div class="page-content">
       <router-view></router-view>
     </div>
+  </div>
     <BotRocker></BotRocker>
   </div>
 </template>
