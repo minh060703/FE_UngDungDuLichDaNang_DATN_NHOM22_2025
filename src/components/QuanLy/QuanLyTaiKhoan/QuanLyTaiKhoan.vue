@@ -31,11 +31,11 @@
                                 <td>{{ value.email }}</td>
                                 <td class="button justify-content-between" style="width: 30%;">
                                     <button class="btn-khoa"
-                                        style="background-color: #F9CA24; border-radius: 10px; width: 100px; color: white; border: 0px; height: 30px;width: 100px;   margin: 5px;">Khoá</button>
+                                        style="background-color: #F9CA24; border-radius: 10px; width: 100px; color: white; border: 0px; height: 30px;width: 30%;   margin: 5px;">Khoá</button>
                                     <button class="btn-xoa"
-                                        style="background-color: #E32929; border-radius: 10px; width: 100px; color: white; border: 0px; height: 30px;width: 100px;    margin: 5px;">Xoá</button>
+                                        style="background-color: #E32929; border-radius: 10px; width: 100px; color: white; border: 0px; height: 30px;width: 30%;    margin: 5px;">Xoá</button>
                                     <button class="btn-chitiet"
-                                        style="background-color: #58D0C1; border-radius: 10px; width: 100px; color: white; border: 0px; height: 30px;width: 100px;    margin: 5px;">Xem
+                                        style="background-color: #58D0C1; border-radius: 10px; width: 100px; color: white; border: 0px; height: 30px;width: 30%;    margin: 5px;">Xem
                                         chi tiết</button>
                                 </td>
                             </tr>
@@ -379,7 +379,7 @@ table td {
 
 .card-table {
     padding: 10px;
-    height: 510px;
+    height: auto;
 }
 
 .pagination .btn {
