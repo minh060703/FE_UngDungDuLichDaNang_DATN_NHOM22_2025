@@ -1,150 +1,236 @@
 <template>
-    <div class="mt-5">
-        <div class="row">
-            <div class="col-lg-12" v-bind:class="{ 'col-lg-12': !isSelected, 'col-lg-8': isSelected }">
-                <div class="header">
-                    <h1>Danh sách tài khoản</h1>
-                    <div class="search-wrapper">
-                        <label for="search" class="text-teal-500 mr-2" style="font-size: 25px;">Search:</label>
-                        <input class="search" type="text" id="search" v-model="searchTerm" placeholder="Tìm kiếm tên...">
-                    </div>
-                </div>
-                <!-- Bảng thông tin tài khoản -->
-                <div class="card-table card">
-                    <table class="table table-bordered" >
-                        <thead  style="background-color: #C9C9C9;border-radius: 10px;">
-                            <tr>
-                                <th>STT</th>
-                                <th>Tên người dùng</th>
-                                <th>Tên đăng nhập</th>
-                                <th>Trạng thái</th>
-                                <th>Email</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(value, index) in paginatedData" :key="index" @click="chon_tai_khoan(index)">
-                                <td>{{ index + 1 + (currentPage - 1) * itemsPerPage }}</td>
-                                <td>{{ value.ten_nguoi_dung }}</td>
-                                <td>{{ value.ten_dang_nhap }}</td>
-                                <td>{{ value.trang_thai }}</td>
-                                <td>{{ value.email }}</td>
-                                <td class="button justify-content-between" style="width: 30%;">
-                                    <button class="btn-khoa"
-                                        style="background-color: #F9CA24; border-radius: 10px; width: 100px; color: white; border: 0px; height: 30px;width: 30%;   margin: 5px;">Khoá</button>
-                                    <button class="btn-xoa"
-                                        style="background-color: #E32929; border-radius: 10px; width: 100px; color: white; border: 0px; height: 30px;width: 30%;    margin: 5px;">Xoá</button>
-                                    <button class="btn-chitiet"
-                                        style="background-color: #58D0C1; border-radius: 10px; width: 100px; color: white; border: 0px; height: 30px;width: 30%;    margin: 5px;">Xem
-                                        chi tiết</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- Nút chuyển trang của bảng -->
-                <div class="dt--bottom-section d-sm-flex justify-content-sm-between text-center mt-3">
-                    <div class="dt--pages-count mb-sm-0 mb-3">
-                        <div class="dataTables_info" role="status" aria-live="polite">
-                            Trang {{ currentPage }} / {{ totalPages }}
+    <div class="mt-5 bg-white">
+        <div class="card bg-white rounded-3">
+            <div class="row">
+                <div id="example_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                    <!-- phần header -->
+                    <div class="card-header" style="padding: 20px;">
+                        <div>
+                            <h2>Quản lý tài khoản</h2>
                         </div>
                     </div>
-                    <div class="dt--pagination">
-                        <div class="dataTables_paginate paging_full_numbers">
-                            <ul class="pagination">
-
-                                <!-- Nút về đầu -->
-                                <li class="paginate_button page-item" :class="{ disabled: currentPage === 1 }">
-                                    <a href="#" class="page-link" @click.prevent="currentPage = 1">
-                                        <i class="fa-solid fa-angles-left"></i>
-                                    </a>
-                                </li>
-
-                                <!-- Nút trước -->
-                                <li class="paginate_button page-item" :class="{ disabled: currentPage === 1 }">
-                                    <a href="#" class="page-link" @click.prevent="currentPage--">
-                                        <i class="fa-solid fa-angle-left"></i>
-                                    </a>
-                                </li>
-
-                                <!-- Các trang -->
-                                <li class="paginate_button page-item" v-for="page in totalPages" :key="page"
-                                    :class="{ active: page === currentPage }">
-                                    <a href="#" class="page-link" @click.prevent="currentPage = page">{{
-                                        page }}</a>
-                                </li>
-
-                                <!-- Nút sau -->
-                                <li class="paginate_button page-item" :class="{ disabled: currentPage === totalPages }">
-                                    <a href="#" class="page-link" @click.prevent="currentPage++">
-                                        <i class="fa-solid fa-angle-right"></i>
-                                    </a>
-                                </li>
-
-                                <!-- Nút cuối -->
-                                <li class="paginate_button page-item" :class="{ disabled: currentPage === totalPages }">
-                                    <a href="#" class="page-link" @click.prevent="currentPage = totalPages">
-                                        <i class="fa-solid fa-angles-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
+                    <div class="card-body" style="padding: 20px;">
+                        <div class="d-flex justify-content-start align-items-center mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div id="example_filter" class="dataTables_filter">
+                                    <div style="position: relative;">
+                                        <i class="fa-solid fa-magnifying-glass fa-flip-horizontal"
+                                            style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #aaa;"></i>
+                                        <input type="text" class="form-control radius-30 search" placeholder="Tìm kiếm "
+                                            id="search" v-model="searchTerm" style="padding-left: 35px;">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Thông tin chi tiết người dùng -->
-            <div v-if="isSelected" class="col-lg-4">
-                <div class="user-info">
-                    <div class="text-end">
-                        <button type="button" class="btn-close" @click="Nuttat"></button><!-- Nút tắt -->
-                    </div>
-                    <div class="user-icon">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="info-item">
-                        <label>Tên người dùng</label>
-                        <div class="info-value">{{ Luu_tam.ten_nguoi_dung }}</div>
-                    </div>
-                    <div class="info-item">
-                        <label>Tên đăng nhập</label>
-                        <div class="info-value">{{ Luu_tam.ten_dang_nhap }}</div>
-                    </div>
-                    <div class="info-item">
-                        <label>Mật khẩu</label>
-                        <div class="info-value">{{ Luu_tam.mat_khau }}</div>
-                    </div>
-                    <div class="info-item">
-                        <label>Email</label>
-                        <div class="info-value">{{ Luu_tam.email }}</div>
-                    </div>
-                    <div class="info-item">
-                        <label>Ngày sinh</label>
-                        <div class="info-value">{{ Luu_tam.ngay_sinh }}</div>
-                    </div>
-                    <div class="info-item">
-                        <label>Giới tính</label>
-                        <div class="info-value">{{ Luu_tam.gioi_tinh }}</div>
-                    </div>
-                    <div class="info-item">
-                        <label>Số điện thoại</label>
-                        <div class="info-value">{{ Luu_tam.so_dien_thoai }}</div>
-                    </div>
-                    <div class="info-item">
-                        <label>Trạng thái</label>
-                        <div class="info-value">{{ Luu_tam.trang_thai }}</div>
-                    </div>
-                    <div class="info-item">
-                        <label>Địa chỉ</label>
-                        <div class="info-value">{{ Luu_tam.dia_chi }}</div>
-                    </div>
-                    <div class="info-item">
-                        <label>Điểm tích lũy</label>
-                        <div class="info-value">{{ Luu_tam.diem_tich_luy }}</div>
+                        <!-- phần danh sách tài khoản -->
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table style="width: 100%;font-size: 18px;" id="example" class="table table-hover  "
+                                    role="grid" aria-describedby="example_info">
+                                    <thead style="background-color: #f8f9fa;">
+                                        <tr role="row">
+                                            <th class="text-center">STT</th>
+                                            <th>Tên người dùng</th>
+                                            <th>Tên đăng nhập</th>
+                                            <th>Email</th>
+                                            <th class="text-center">Ngày sinh</th>
+                                            <th class="text-center">Giới tính</th>
+                                            <th class="text-center">Trạng thái</th>
+                                            <th class="text-center">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="font-size: 16px;">
+                                        <tr role="row" v-for="(value, index) in paginatedData" :key="index">
+                                            <td class="text-center">{{ index + 1 + (currentPage - 1) * itemsPerPage }}
+                                            </td>
+                                            <td>{{ value.ten_nguoi_dung }}</td>
+                                            <td>{{ value.ten_dang_nhap }}</td>
+                                            <td>{{ value.email }}</td>
+                                            <td class="text-center">{{ formatDate(value.ngay_sinh) }}</td>
+                                            <td class="text-center">
+                                                <span v-if="value.gioi_tinh == 1">Nam</span>
+                                                <span v-else>Nữ</span>
+                                            </td>
+                                            <td style="text-align: center;font-size: 18px;">
+                                                <a v-if="value.trang_thai == 0" class="badge rounded-pill text-danger bg-light-danger p-2 text-uppercase px-3"><i
+                                                    class='bx bxs-circle me-1'></i> ĐANG TẠM KHOÁ</a>
+                                                <a v-else class="badge rounded-pill text-success bg-light-success p-2 text-uppercase px-3"><i
+                                                    class='bx bxs-circle me-1'></i> ĐANG HOẠT ĐỘNG</a>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-center">
+                                                    <div class="d-flex order-actions justify-content-center">
+                                                        <a href="javascript:;" class="ms-3" data-bs-toggle="modal"
+                                                            data-bs-target="#ModalXemTaiKhoan"><i
+                                                                class="fa-solid fa-eye"
+                                                                @click="xemChiTietTaiKhoan(value)"></i></a>
+                                                        <a href="javascript:;" class="ms-3" data-bs-toggle="modal"
+                                                            data-bs-target="#ModalXoaTaiKhoan"
+                                                            @click="hienThiModalXoa(value)"><i
+                                                                class='bx bxs-trash'></i></a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- phần footer -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="dataTables_info" id="example_info" role="status" aria-live="polite">
+                                {{ currentPage }} / {{ totalPages }}</div>
+                            <div>
+                                <div class="dt--pagination d-flex justify-content-end mt-3">
+                                    <div class="dataTables_paginate paging_full_numbers">
+                                        <ul class="pagination">
+
+                                            <!-- Nút về đầu -->
+                                            <li class="paginate_button page-item"
+                                                :class="{ disabled: currentPage === 1 }">
+                                                <a href="#" class="page-link" @click.prevent="currentPage = 1">
+                                                    <i class="fa-solid fa-angles-left"></i>
+                                                </a>
+                                            </li>
+
+                                            <!-- Nút trước -->
+                                            <li class="paginate_button page-item"
+                                                :class="{ disabled: currentPage === 1 }">
+                                                <a href="#" class="page-link" @click.prevent="currentPage--">
+                                                    <i class="fa-solid fa-angle-left"></i>
+                                                </a>
+                                            </li>
+
+                                            <!-- Các trang -->
+                                            <li class="paginate_button page-item" v-for="page in totalPages" :key="page"
+                                                :class="{ active: page === currentPage }">
+                                                <a href="#" class="page-link" @click.prevent="currentPage = page">{{
+                                                    page }}</a>
+                                            </li>
+
+                                            <!-- Nút sau -->
+                                            <li class="paginate_button page-item"
+                                                :class="{ disabled: currentPage === totalPages }">
+                                                <a href="#" class="page-link" @click.prevent="currentPage++">
+                                                    <i class="fa-solid fa-angle-right"></i>
+                                                </a>
+                                            </li>
+
+                                            <!-- Nút cuối -->
+                                            <li class="paginate_button page-item"
+                                                :class="{ disabled: currentPage === totalPages }">
+                                                <a href="#" class="page-link" @click.prevent="currentPage = totalPages">
+                                                    <i class="fa-solid fa-angles-right"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- Modal xoá tài khoản -->
+    <div class="modal fade" id="ModalXoaTaiKhoan" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="content p-5 px-3 text-center">
+                        <span class="fa-stack fa-2x mb-3">
+                            <i class="fa-solid fa-2xl fa-circle" style="color: #ffc8c2;"></i>
+                            <i class="fa-solid fa-trash-can text-danger fa-stack-1x"></i>
+                        </span>
+                        <h3 class="fs-20 text-gray-9 fw-bold mb-2 mt-1">Xoá tài khoản</h3>
+                        <p class="text-gray-6 mb-0 fs-16">Bạn có chắc chắn muốn xoá tài khoản này không?</p>
+                        <p class="text-gray-6 mb-0 fs-16">Sau khi xoá tài khoản này sẽ không còn hoạt động !</p>
+                        <h5 class="mt-3">{{ tai_khoan.ten_nguoi_dung }} - {{ tai_khoan.ten_dang_nhap }}</h5>
+                        <div class="modal-footer-btn mt-3 d-flex justify-content-center mt-5">
+                            <button type="button" class="btn me-2 btn-secondary fs-13 fw-medium p-2 px-3 shadow-none"
+                                data-bs-dismiss="modal" style="background-color: #FF2C2C;width: 30%;">Huỷ</button>
+                            <button type="submit" class="btn btn-primary fs-13 fw-medium p-2 px-3"
+                                @click="xoa_tai_khoan" style="background-color: #FE9F43;width: 30%;">Đồng ý xoá</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal xem tài khoản -->
+    <div class="modal fade" id="ModalXemTaiKhoan" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content" style="padding: 20px;">
+                <div class="modal-body">
+                    <h3 class="text-center mb-4" style="font-size: 40px; font-weight: bold;">Chi tiết tài khoản</h3>
+                    <div class="row row-cols-1 row-cols-md-2 g-3">
+                        <div class="col">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-3"><i class="fa-solid fa-user fa-xl me-2 text-primary"></i>
+                                        Thông tin cá nhân
+                                    </h5>
+                                    <p class="card-text fs-5"><strong>Tên người dùng:</strong> {{
+                                        tai_khoan.ten_nguoi_dung }}
+                                    </p>
+                                    <p class="card-text fs-5"><strong>Giới tính:</strong> <span
+                                            v-if="tai_khoan.gioi_tinh == 1">Nam</span><span v-else>Nữ</span></p>
+                                    <p class="card-text fs-5"><strong>Ngày sinh:</strong> {{
+                                        formatDate(tai_khoan.ngay_sinh) }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-3"><i class="fa-solid fa-lock fa-xl me-2 text-success"></i>
+                                        Thông tin đăng nhập
+                                    </h5>
+                                    <p class="card-text fs-5"><strong>Tên đăng nhập:</strong> {{ tai_khoan.ten_dang_nhap
+                                        }}
+                                    </p>
+                                    <p class="card-text fs-5"><strong>Mật khẩu:</strong> {{ tai_khoan.mat_khau }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-3"><i
+                                            class="fa-solid fa-envelope fa-xl me-2 text-info"></i>
+                                        Thông tin liên hệ
+                                    </h5>
+                                    <p class="card-text fs-5"><strong>Email:</strong> {{ tai_khoan.email }}</p>
+                                    <p class="card-text fs-5"><strong>Số điện thoại:</strong> {{ tai_khoan.so_dien_thoai
+                                        }}
+                                    </p>
+                                    <p class="card-text fs-5"><strong>Địa chỉ:</strong> {{ tai_khoan.dia_chi }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-3"><i
+                                            class="fa-solid fa-circle-info fa-xl me-2 text-warning"></i> Thông tin khác
+                                    </h5>
+                                    <p class="card-text fs-5"><strong>Trạng thái:</strong> <span
+                                            v-if="tai_khoan.trang_thai == 1">Đang hoạt động</span><span v-else>Tạm
+                                            khoá</span></p>
+                                    <p class="card-text fs-5"><strong>Số điểm tích lũy:</strong> {{
+                                        tai_khoan.diem_tich_luy }} <i class="fa-solid fa-star fa-lg"
+                                            style="color: #FFD43B;"></i></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </template>
 <script>
 
@@ -168,57 +254,52 @@ export default {
             },
             searchTerm: '', // Dữ liệu tìm kiếm 
             currentPage: 1, // Trang bắt đầu với page 1
-            itemsPerPage: 8, // Giới hạn 8 dòng thông tin trên table
+            itemsPerPage: 10, // Giới hạn 10 dòng thông tin trên table
             lists_tai_khoan: [
-                { ten_nguoi_dung: "Nguyễn Văn A", ten_dang_nhap: "nguyenvana", mat_khau: "12345678", email: "vana@example.com", ngay_sinh: "1995-03-15", dia_chi: "123 Lê Lợi, Hải Châu, Đà Nẵng", so_dien_thoai: "0912345678", trang_thai: "Đang hoạt động", diem_tich_luy: "1500", gioi_tinh: "nam" },
-                { ten_nguoi_dung: "Trần Thị B", ten_dang_nhap: "tranthib", mat_khau: "matkhauB123", email: "thib@example.com", ngay_sinh: "1998-07-22", dia_chi: "456 Trần Phú, Thanh Khê, Đà Nẵng", so_dien_thoai: "0987654321", trang_thai: "Tạm khoá", diem_tich_luy: "820", gioi_tinh: "nữ" },
-                { ten_nguoi_dung: "Lê Minh C", ten_dang_nhap: "leminhc", mat_khau: "abc12345", email: "minhc@example.com", ngay_sinh: "1990-12-05", dia_chi: "789 Nguyễn Văn Linh, Cẩm Lệ, Đà Nẵng", so_dien_thoai: "0909123456", trang_thai: "Đang hoạt động", diem_tich_luy: "2200", gioi_tinh: "nam" },
-                { ten_nguoi_dung: "Phạm Thị D", ten_dang_nhap: "phamthid", mat_khau: "pass1234", email: "thid@example.com", ngay_sinh: "1996-11-10", dia_chi: "21 Hoàng Diệu, Sơn Trà, Đà Nẵng", so_dien_thoai: "0934567890", trang_thai: "Đang hoạt động", diem_tich_luy: "1340", gioi_tinh: "nữ" },
-                { ten_nguoi_dung: "Hoàng Văn E", ten_dang_nhap: "hoangvane", mat_khau: "ehoang321", email: "vane@example.com", ngay_sinh: "1993-06-25", dia_chi: "101 Hùng Vương, Liên Chiểu, Đà Nẵng", so_dien_thoai: "0978123456", trang_thai: "Tạm khoá", diem_tich_luy: "450", gioi_tinh: "nam" },
-                { ten_nguoi_dung: "Đỗ Thị F", ten_dang_nhap: "dothif", mat_khau: "dothi@123", email: "thif@example.com", ngay_sinh: "1999-08-18", dia_chi: "12 Lý Thường Kiệt, Đà Nẵng", so_dien_thoai: "0911223344", trang_thai: "Đang hoạt động", diem_tich_luy: "960", gioi_tinh: "nữ" },
-                { ten_nguoi_dung: "Võ Văn G", ten_dang_nhap: "vovang", mat_khau: "vang1234", email: "vang@example.com", ngay_sinh: "1988-04-14", dia_chi: "333 Điện Biên Phủ, Đà Nẵng", so_dien_thoai: "0966554433", trang_thai: "Đang hoạt động", diem_tich_luy: "3100", gioi_tinh: "nam" },
-                { ten_nguoi_dung: "Ngô Thị H", ten_dang_nhap: "ngothih", mat_khau: "passwordH", email: "thih@example.com", ngay_sinh: "1991-02-20", dia_chi: "56 Nguyễn Tri Phương, Đà Nẵng", so_dien_thoai: "0933557799", trang_thai: "Tạm khoá", diem_tich_luy: "760", gioi_tinh: "nữ" },
-                { ten_nguoi_dung: "Phan Văn I", ten_dang_nhap: "phanvani", mat_khau: "i1234567", email: "vani@example.com", ngay_sinh: "1992-09-30", dia_chi: "89 Nguyễn Hữu Thọ, Đà Nẵng", so_dien_thoai: "0988112233", trang_thai: "Đang hoạt động", diem_tich_luy: "1890", gioi_tinh: "nam" },
-                { ten_nguoi_dung: "Bùi Thị J", ten_dang_nhap: "buithij", mat_khau: "jpass789", email: "thij@example.com", ngay_sinh: "2000-01-12", dia_chi: "321 Phan Châu Trinh, Đà Nẵng", so_dien_thoai: "0907766554", trang_thai: "Đang hoạt động", diem_tich_luy: "540", gioi_tinh: "nữ" },
-                { ten_nguoi_dung: "Mai Văn K", ten_dang_nhap: "maivank", mat_khau: "k123pass", email: "vank@example.com", ngay_sinh: "1985-05-09", dia_chi: "5 Hoàng Hoa Thám, Đà Nẵng", so_dien_thoai: "0944112255", trang_thai: "Tạm khoá", diem_tich_luy: "300", gioi_tinh: "nam" },
-                { ten_nguoi_dung: "Lương Thị L", ten_dang_nhap: "luongthil", mat_khau: "luong123", email: "thil@example.com", ngay_sinh: "1997-07-07", dia_chi: "9 Phạm Văn Đồng, Đà Nẵng", so_dien_thoai: "0922334455", trang_thai: "Đang hoạt động", diem_tich_luy: "1220", gioi_tinh: "nữ" },
-                { ten_nguoi_dung: "Tô Văn M", ten_dang_nhap: "tovanm", mat_khau: "123m456", email: "vanm@example.com", ngay_sinh: "1994-10-11", dia_chi: "22 Nguyễn Văn Thoại, Đà Nẵng", so_dien_thoai: "0966778899", trang_thai: "Đang hoạt động", diem_tich_luy: "1100", gioi_tinh: "nam" },
-                { ten_nguoi_dung: "Đinh Thị N", ten_dang_nhap: "dinhthin", mat_khau: "n987pass", email: "thin@example.com", ngay_sinh: "1993-03-03", dia_chi: "4 Nguyễn Chí Thanh, Đà Nẵng", so_dien_thoai: "0933445566", trang_thai: "Tạm khoá", diem_tich_luy: "780", gioi_tinh: "nữ" },
-                { ten_nguoi_dung: "Vũ Văn O", ten_dang_nhap: "vuvano", mat_khau: "passo123", email: "vano@example.com", ngay_sinh: "1989-08-19", dia_chi: "45 Nguyễn Du, Đà Nẵng", so_dien_thoai: "0911778899", trang_thai: "Đang hoạt động", diem_tich_luy: "2430", gioi_tinh: "nam" },
-                { ten_nguoi_dung: "Nguyễn Thị P", ten_dang_nhap: "nguyenthp", mat_khau: "p321nguyen", email: "thip@example.com", ngay_sinh: "1996-06-26", dia_chi: "77 Hàm Nghi, Đà Nẵng", so_dien_thoai: "0909988776", trang_thai: "Tạm khoá", diem_tich_luy: "670", gioi_tinh: "nữ" },
-                { ten_nguoi_dung: "Cao Văn Q", ten_dang_nhap: "caovanq", mat_khau: "qpass456", email: "vanq@example.com", ngay_sinh: "1991-01-01", dia_chi: "65 Tôn Đức Thắng, Đà Nẵng", so_dien_thoai: "0977889900", trang_thai: "Đang hoạt động", diem_tich_luy: "1010", gioi_tinh: "nam" },
-                { ten_nguoi_dung: "Hà Thị R", ten_dang_nhap: "hathir", mat_khau: "r456789", email: "thir@example.com", ngay_sinh: "1995-12-13", dia_chi: "11 Bạch Đằng, Đà Nẵng", so_dien_thoai: "0933441122", trang_thai: "Tạm khoá", diem_tich_luy: "420", gioi_tinh: "nữ" },
-                { ten_nguoi_dung: "Phùng Văn S", ten_dang_nhap: "phungvans", mat_khau: "sphung123", email: "vans@example.com", ngay_sinh: "1987-11-17", dia_chi: "31 Nguyễn Tất Thành, Đà Nẵng", so_dien_thoai: "0944887766", trang_thai: "Đang hoạt động", diem_tich_luy: "1720", gioi_tinh: "nam" },
-                { ten_nguoi_dung: "Đặng Thị T", ten_dang_nhap: "dangthit", mat_khau: "tthidang", email: "thit@example.com", ngay_sinh: "1992-04-06", dia_chi: "14 Quang Trung, Đà Nẵng", so_dien_thoai: "0988334455", trang_thai: "Tạm khoá", diem_tich_luy: "900", gioi_tinh: "nữ" }
+                { ten_nguoi_dung: "Nguyễn Văn A", ten_dang_nhap: "nguyenvana", mat_khau: "12345678", email: "vana@example.com", ngay_sinh: "1995-03-15", dia_chi: "123 Lê Lợi, Hải Châu, Đà Nẵng", so_dien_thoai: "0912345678", trang_thai: 1, diem_tich_luy: 1500, gioi_tinh: 1 },
+                { ten_nguoi_dung: "Trần Thị B", ten_dang_nhap: "tranthib", mat_khau: "12345678", email: "btran@example.com", ngay_sinh: "1996-05-10", dia_chi: "45 Hoàng Diệu, Hải Châu, Đà Nẵng", so_dien_thoai: "0912345679", trang_thai: 0, diem_tich_luy: 1200, gioi_tinh: 0 },
+                { ten_nguoi_dung: "Lê Văn C", ten_dang_nhap: "levanc", mat_khau: "12345678", email: "cle@example.com", ngay_sinh: "1994-12-20", dia_chi: "78 Nguyễn Văn Linh, Hải Châu", so_dien_thoai: "0912345680", trang_thai: 1, diem_tich_luy: 980, gioi_tinh: 1 },
+                { ten_nguoi_dung: "Phạm Thị D", ten_dang_nhap: "phamthid", mat_khau: "12345678", email: "dpham@example.com", ngay_sinh: "1993-07-08", dia_chi: "23 Lý Thường Kiệt, Thanh Khê", so_dien_thoai: "0912345681", trang_thai: 0, diem_tich_luy: 1320, gioi_tinh: 0 },
+                { ten_nguoi_dung: "Đỗ Văn E", ten_dang_nhap: "dovane", mat_khau: "12345678", email: "edov@example.com", ngay_sinh: "1992-01-25", dia_chi: "56 Trưng Nữ Vương, Hải Châu", so_dien_thoai: "0912345682", trang_thai: 1, diem_tich_luy: 2000, gioi_tinh: 1 },
+                { ten_nguoi_dung: "Ngô Thị F", ten_dang_nhap: "ngothif", mat_khau: "12345678", email: "fngo@example.com", ngay_sinh: "1997-09-30", dia_chi: "89 Nguyễn Hữu Thọ, Hải Châu", so_dien_thoai: "0912345683", trang_thai: 0, diem_tich_luy: 400, gioi_tinh: 0 },
+                { ten_nguoi_dung: "Võ Văn G", ten_dang_nhap: "vovang", mat_khau: "12345678", email: "gvo@example.com", ngay_sinh: "1990-11-11", dia_chi: "100 Phan Châu Trinh, Hải Châu", so_dien_thoai: "0912345684", trang_thai: 1, diem_tich_luy: 1800, gioi_tinh: 1 },
+                { ten_nguoi_dung: "Huỳnh Thị H", ten_dang_nhap: "huynhthih", mat_khau: "12345678", email: "hhuynh@example.com", ngay_sinh: "1998-06-22", dia_chi: "12 Điện Biên Phủ, Thanh Khê", so_dien_thoai: "0912345685", trang_thai: 1, diem_tich_luy: 300, gioi_tinh: 0 },
+                { ten_nguoi_dung: "Trịnh Văn I", ten_dang_nhap: "trinhvani", mat_khau: "12345678", email: "itrinh@example.com", ngay_sinh: "1991-08-19", dia_chi: "67 Hàm Nghi, Thanh Khê", so_dien_thoai: "0912345686", trang_thai: 0, diem_tich_luy: 1100, gioi_tinh: 1 },
+                { ten_nguoi_dung: "Bùi Thị J", ten_dang_nhap: "buithij", mat_khau: "12345678", email: "jtran@example.com", ngay_sinh: "1996-04-14", dia_chi: "34 Lê Duẩn, Hải Châu", so_dien_thoai: "0912345687", trang_thai: 1, diem_tich_luy: 990, gioi_tinh: 0 },
+                { ten_nguoi_dung: "Nguyễn Văn K", ten_dang_nhap: "nguyenvank", mat_khau: "12345678", email: "knguyen@example.com", ngay_sinh: "1995-10-02", dia_chi: "21 Nguyễn Chí Thanh", so_dien_thoai: "0912345688", trang_thai: 0, diem_tich_luy: 1050, gioi_tinh: 1 },
+                { ten_nguoi_dung: "Trần Thị L", ten_dang_nhap: "tranthil", mat_khau: "12345678", email: "ltran@example.com", ngay_sinh: "1997-03-12", dia_chi: "49 Nguyễn Tri Phương", so_dien_thoai: "0912345689", trang_thai: 1, diem_tich_luy: 870, gioi_tinh: 0 },
+                { ten_nguoi_dung: "Lê Văn M", ten_dang_nhap: "levanm", mat_khau: "12345678", email: "mle@example.com", ngay_sinh: "1993-05-18", dia_chi: "90 Âu Cơ, Liên Chiểu", so_dien_thoai: "0912345690", trang_thai: 0, diem_tich_luy: 300, gioi_tinh: 1 },
+                { ten_nguoi_dung: "Phạm Thị N", ten_dang_nhap: "phamthin", mat_khau: "12345678", email: "npham@example.com", ngay_sinh: "1999-09-09", dia_chi: "11 Phan Đình Phùng", so_dien_thoai: "0912345691", trang_thai: 1, diem_tich_luy: 2100, gioi_tinh: 0 },
+                { ten_nguoi_dung: "Đỗ Văn O", ten_dang_nhap: "dovano", mat_khau: "12345678", email: "odov@example.com", ngay_sinh: "1990-02-20", dia_chi: "7 Thanh Sơn", so_dien_thoai: "0912345692", trang_thai: 1, diem_tich_luy: 450, gioi_tinh: 1 },
+                { ten_nguoi_dung: "Ngô Thị P", ten_dang_nhap: "ngothip", mat_khau: "12345678", email: "pngo@example.com", ngay_sinh: "1994-01-01", dia_chi: "88 Nguyễn Hoàng", so_dien_thoai: "0912345693", trang_thai: 0, diem_tich_luy: 1550, gioi_tinh: 0 },
+                { ten_nguoi_dung: "Võ Văn Q", ten_dang_nhap: "vovanq", mat_khau: "12345678", email: "qvo@example.com", ngay_sinh: "1992-06-06", dia_chi: "10 Hùng Vương", so_dien_thoai: "0912345694", trang_thai: 1, diem_tich_luy: 990, gioi_tinh: 1 },
+                { ten_nguoi_dung: "Huỳnh Thị R", ten_dang_nhap: "huynhthir", mat_khau: "12345678", email: "rhuynh@example.com", ngay_sinh: "1996-08-15", dia_chi: "55 Trần Phú", so_dien_thoai: "0912345695", trang_thai: 1, diem_tich_luy: 1330, gioi_tinh: 0 },
+                { ten_nguoi_dung: "Trịnh Văn S", ten_dang_nhap: "trinhvans", mat_khau: "12345678", email: "strinh@example.com", ngay_sinh: "1991-07-07", dia_chi: "101 Bạch Đằng", so_dien_thoai: "0912345696", trang_thai: 0, diem_tich_luy: 760, gioi_tinh: 1 },
+                { ten_nguoi_dung: "Bùi Thị T", ten_dang_nhap: "buithit", mat_khau: "12345678", email: "tbui@example.com", ngay_sinh: "1993-03-03", dia_chi: "33 Trần Cao Vân", so_dien_thoai: "0912345697", trang_thai: 1, diem_tich_luy: 1900, gioi_tinh: 0 }
             ],
             luu_tai_khoan: null,
+            modalXoa: null,
+            modalXem: null,
             isSelected: false, // Trạng thái để xác định xem có chọn tài khoản nào hay không
 
         }
     },
     computed: {
-        lists_tai_khoan() {
-            return this.lists_tai_khoan.filter(product => {
-                const searchTerm = this.searchTerm.toLowerCase();
+        filteredTaiKhoan() {
+            const searchTerm = this.searchTerm.toLowerCase().replace(/\s/g, '');
 
+            return this.lists_tai_khoan.filter(taiKhoan => {
+                const tenNguoiDungLower = taiKhoan.ten_nguoi_dung.toLowerCase().replace(/\s/g, '');
+                const tenDangNhapLower = taiKhoan.ten_dang_nhap.toLowerCase().replace(/\s/g, '');
+                const emailLower = taiKhoan.email.toLowerCase().replace(/\s/g, '');
 
-                // Tìm kiếm theo tên và tên đăng nhập
-                // Hàm normalizeString để loại bỏ dấu
-                const normalizeString = (str) => {
-                    // Chuyển chuỗi thành dạng NFD (Normalization Form D), phân tách dấu và ký tự
-                    // Sau đó loại bỏ tất cả các ký tự dấu phụ (diacritics) bằng cách sử dụng biểu thức chính quy
-                    // Ví dụ: "á" sẽ thành "a", "đ" sẽ thành "d", "Đ" thành "D"
-                    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-                };
-                // Kiểm tra nếu tên đăng nhập hoặc tên người dùng chứa từ khóa tìm kiếm (không phân biệt dấu và chữ hoa/thường)
                 return (
-                    normalizeString(product.ten_nguoi_dung).includes(normalizeString(searchTerm)) || // Kiểm tra tên người dùng
-                    normalizeString(product.ten_dang_nhap).includes(normalizeString(searchTerm)) // Kiểm tra tên đăng nhập
+                    tenNguoiDungLower.includes(searchTerm) ||
+                    tenDangNhapLower.includes(searchTerm) ||
+                    emailLower.includes(searchTerm)
                 );
             });
         },
-
-
         totalPages() {
             return Math.ceil(this.lists_tai_khoan.length / this.itemsPerPage);
         },
@@ -226,8 +307,15 @@ export default {
         paginatedData() {
             const start = (this.currentPage - 1) * this.itemsPerPage;
             const end = start + this.itemsPerPage;
-            return this.lists_tai_khoan.slice(start, end);
-        }
+            return this.filteredTaiKhoan.slice(start, end);
+        },
+        mounted() {
+            this.modalXoa = new bootstrap.Modal(document.getElementById('ModalXoaTaiKhoan'));
+        },
+    },
+    mounted() {
+        this.modalXoa = new bootstrap.Modal(document.getElementById('ModalXoaTaiKhoan'));
+
     },
     methods: {
         chon_tai_khoan(index) {
@@ -235,159 +323,55 @@ export default {
             this.isSelected = true; // Đặt trạng thái đã chọn để hiển thị bảng thông tin bên cạnh
             //this.luu_tai_khoan = index;  // Lưu index của tai khoản để xóa hoặc sửa
         },
-        Nuttat() {
-            // Khi nhấn nút, sẽ tắt/hủy chọn thông tin chi tiết
-            this.isSelected = false; // Trạng thái để xác định xem có chọn tài khoản nào hay không
-        },
         changePage(page) {
             if (page >= 1 && page <= this.totalPages) {
                 this.currentPage = page;
             }
+        },
+        hienThiModalXoa(taiKhoanCanXoa) {
+            this.tai_khoan = { ...taiKhoanCanXoa };
+            this.modalXoa.show();
+        },
+        xemChiTietTaiKhoan(taiKhoan) {
+            this.tai_khoan = { ...taiKhoan }; // Sao chép dữ liệu tài khoản vào biến tai_khoan
+            const modalXemTaiKhoan = new bootstrap.Modal(document.getElementById('ModalXemTaiKhoan'));
+            modalXemTaiKhoan.show(); // Hiển thị modal
+        },
+        xoa_tai_khoan() {
+            // Tìm index của tài khoản cần xóa trong mảng lists_tai_khoan
+            const indexToDelete = this.lists_tai_khoan.findIndex(
+                (tk) => tk.ten_dang_nhap === this.tai_khoan.ten_dang_nhap
+            );
+
+            if (indexToDelete !== -1) {
+                this.lists_tai_khoan.splice(indexToDelete, 1);
+                this.modalXoa.hide();
+                // Có thể thêm thông báo thành công ở đây
+                console.log('Đã xóa tài khoản:', this.tai_khoan.ten_nguoi_dung);
+                // Reset currentPage nếu trang hiện tại không còn dữ liệu
+                if (this.paginatedData.length === 0 && this.currentPage > 1) {
+                    this.currentPage--;
+                }
+            } else {
+                console.error('Không tìm thấy tài khoản để xóa trong lists_tai_khoan');
+                // Có thể thêm thông báo lỗi ở đây
+            }
+        },
+        // Chuyển định danh ngày tháng năm thành dạng dd/mm/yyyy
+        formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+            const year = date.getFullYear();
+            return `${day} / ${month} / ${year}`;
         }
+    },
+    watch: {
+        searchTerm() {
+            this.currentPage = 1; // Reset về trang đầu tiên khi tìm kiếm
+        }
+        // ... các watch khác của bạn
     },
 }
 </script>
-<style>
-.row {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.col-lg-8 {
-    flex: 0 0 66.67%;
-    /* Cột chiếm 66% chiều rộng */
-    padding-right: 15px;
-}
-
-/* Header section style */
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-    /* Khoảng cách dưới */
-}
-
-.header h1 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #14b8a6;
-    /* Màu chữ cho tiêu đề */
-}
-
-/* Search input style */
-.search-wrapper {
-    display: flex;
-    align-items: center;
-}
-
-.search-wrapper label {
-    color: #14b8a6;
-    /* Màu chữ cho label */
-    margin-right: 8px;
-    font-size: 25px;
-}
-
-.search-wrapper input {
-    border: 2px solid aquamarine;
-    border-radius: 10px;
-    height: 45px;
-}
-
-/* Table style */
-table {
-    width: 100%;
-    border: 1px solid #000;
-}
-
-table:hover {
-    cursor: pointer;
-}
-
-table th,
-table td {
-    text-align: center;
-    padding: 8px;
-    /* Khoảng cách trong các ô */
-}
-
-/* Pagination style */
-.pagination {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-}
-
-.pagination button {
-    border: 1px solid #14b8a6;
-    /* Màu viền của nút */
-    padding: 1px 1px 1px 5px;
-    background-color: transparent;
-    color: #14b8a6;
-    /* Màu chữ cho nút */
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-/* Right column user info */
-.col-lg-4 {
-    flex: 0 0 33.33%;
-    /* Cột chiếm 33% chiều rộng */
-}
-
-.user-info {
-    border: 2px solid #14b8a6;
-    padding: 16px;
-    border-radius: 8px;
-    width: 100%;
-}
-
-/* User icon */
-.user-icon {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 16px;
-}
-
-.user-icon i {
-    font-size: 2rem;
-    color: #14b8a6;
-    /* Màu icon */
-}
-
-/* Info items */
-.info-item {
-    margin-bottom: 12px;
-}
-
-.info-item label {
-    display: block;
-    color: #14b8a6;
-    /* Màu label */
-    margin-bottom: 4px;
-}
-
-.info-value {
-    height: 40px;
-    background-color: #e6f7f3;
-    /* Màu nền cho thông tin */
-    padding: 8px;
-    border-radius: 6px;
-    color: #58D0C1;
-    /* Màu chữ thông tin */
-}
-
-.card-table {
-    padding: 10px;
-    height: auto;
-}
-
-.pagination .btn {
-    margin: 12px;
-}
-
-.card-table .table tbody tr td .button .btn-khoa {
-    width: 100px;
-    border-radius: 15px;
-}
-</style>
+<style></style>
